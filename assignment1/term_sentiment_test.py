@@ -7,24 +7,45 @@ class TestTermSentiment(unittest.TestCase):
         self.scores = ts.load_scores('AFINN-111.txt')
 
     def test_score_tweet(self):
-        score = ts.score_tweet("", self.scores)
-        self.assertEqual(0, score[0])
+        ts.score_tweet("", self.scores)
+        self.assertEqual({}, ts.new_scores)
         
-        score = ts.score_tweet("theres a guy in this resturaunt who looks like ed im in heaven theres chicken wings and a beautiful ginger man", self.scores)
-        self.assertEqual(7, score[0])
+        ts.score_tweet("foo bar abandon bar", self.scores)
+        self.assertEqual({'foo':(-2,1), 'bar':(-2,2)}, ts.new_scores)
         
-        score = ts.score_tweet("My knee hurts so bad and it itches but I can't get to the itchy spot due the the wrap! Ugh #Struggles", self.scores)
-        self.assertEqual(-7, score[0])
+        ts.score_tweet("accept absolved adorable adventure award backing backs awesome attracts benefit stress", self.scores)
+        self.assertEqual((21.0, 1), ts.new_scores['stress'])
+        self.assertEqual((-2.0, 1), ts.new_scores['foo'])
+        self.assertEqual((-2.0, 2), ts.new_scores['bar'])
         
-        score = ts.score_tweet("abandon abandon abandon", self.scores)
-        self.assertEqual(-6, score[0])
+        ts.score_tweet("barrier bastards benefitted chastises charged charmless chastises cheat giddy gloomy friend", self.scores)
+        self.assertEqual((-21.0, 1), ts.new_scores['friend'])
         
-        score = ts.score_tweet("@BT_toner wish I could! Samford problems, two weeks left.", self.scores)
-        self.assertEqual(1, score[0])
+        ts.score_tweet("barrier fuck bad worse bastards benefitted chastises charged charmless chastises cheat giddy gloomy stress", self.scores)
+        self.assertEqual((-10.0, 2), ts.new_scores['stress'])
         
-        score = ts.score_tweet("@JonasBrothers New POM POMS single is available NOW on iTunes: http://smarturl.it/jbtw FREE APP: iTunes: http://bit.ly/N5t6uR  and Android: http://bit.ly/TJRJfz", self.scores)
-        print score
-        #self.assertEqual(-1, score[0])
-    
+        ts.score_tweet("foo bar stress bar", self.scores)
+        self.assertEqual((-16.0, 3), ts.new_scores['stress'])
+        self.assertEqual((-16.0, 2), ts.new_scores['foo'])
+        self.assertEqual((-16.0, 4), ts.new_scores['bar'])
+        
+        ts.score_tweet("Suicide Doesnt End The Chances Of Life Gettin Worse, Suicide Eliminates The Possibility Of It Ever Gettin Better", self.scores)
+        #print ts.new_scores
+        
+    def test_find(self):
+        terms = ['love', 'happiness', 'ship', 'love']
+        count = ts.find(terms, 'love')
+        self.assertEqual(2, count)
+        
+        terms = "barrier bastards benefitted chastises charged charmless chastises cheat giddy gloomy stress".split()
+        ts.find(terms, 'barrier')
+        ts.find(terms, 'bastards')
+        ts.find(terms, 'benefitted')
+        ts.find(terms, 'charged')
+        ts.find(terms, 'charmless')
+        count = ts.find(terms, 'chastises')                
+        self.assertEqual(2, count)
+        self.assertEqual("cheat giddy gloomy stress".split(), terms)
+   
 if __name__ == '__main__':
     unittest.main()
