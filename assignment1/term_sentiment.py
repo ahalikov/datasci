@@ -6,9 +6,9 @@ author: Artur Khalikov
 import sys
 import json
 
-new_scores = {}
 text = lambda tweet: tweet if 'text' in tweet else {}
-filters = lambda tweet: text(tweet)
+lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
+filters = lambda tweet: lang_en(text(tweet))
 
 def load_scores(file_name):
     sent_file = open(file_name)
@@ -18,50 +18,75 @@ def load_scores(file_name):
         scores[term] = int(score)
     return scores
 
-def add_term(term, score):
-    score = new_scores[term] + score if term in new_scores else score
-    new_scores[term] = (score, 1)
-    
 def find(terms, key):
-    terms_lo = [t for t in terms]
-    count = terms_lo.count(key)
-    if count > 0:
-        for t, tlo in zip(terms, terms_lo):
-            if tlo == key:
-                terms.remove(t)
-    return count
+    if key not in terms:
+        return False
+    while key in terms:
+        terms.remove(key)
+    return True
     
-def score_tweet(tweet, scores):
-    terms = tweet.split()
-    score = 0.0
-    for key, value in scores.items():        
-        occurences = find(terms, key)        
-        if occurences > 0:
-            score += value    
+def score_tweet(terms, scores):
+    new_terms = {}
+    score = 0
     for term in terms:
-        if term in new_scores:            
-            score += new_scores[term][0]
+        term_lo = term.lower()
+        if term_lo in scores:
+            count = terms.count(term)
+            score += (scores[term_lo]*1.0) / count
+        else:
+            new_terms[term] = 1
+    return (score, new_terms, len(terms))
+
+def adjust_score(score, norm, terms, new_scores):
+    # adjusting score
     for term in terms:
         if term in new_scores:
             t = new_scores[term]
-            new_scores[term] = (score, t[1] + 1)
+            score += t[0]
+    # assigning adjusted score to the new terms
+    for term in terms:
+        if term in new_scores:
+            new_scores[term] = t
+            value = (score*1.0) / (t[1] + 1)
+            new_scores[term] = (value, t[1] + 1)
         else:
-            add_term(term, score)
-    return score        
-        
-def main():
-    scores = load_scores(sys.argv[1])    
-    tweet_file = open(sys.argv[2])
+            value = (score*1.0) / norm                
+            new_scores[term] = (value, 1)
+    return score, new_scores
     
+def score_new_terms(tweet, scores, new_scores):
+    terms = [t.strip(',.!#') for t in tweet.split()]
+    score, new_terms, norm = score_tweet(terms, scores)
+    
+    score0 = score
+    s0 = {}
+    if 'stress' in terms:        
+        for term in terms:
+            s0[term] = new_scores[term] if term in new_scores else None
+    
+    score, new_scores = adjust_score(score, norm, new_terms, new_scores)
+    if 'stress' in terms:
+        s = {}
+        for term in terms:
+            s[term] = new_scores[term] if term in new_scores else None
+        #print '{0} || {1}->{2} || {3}'.format(tweet, score0, score, str(s))
+    return new_scores
+    
+def score_file(tweet_file, scores):
+    new_scores = {}
     for line in tweet_file:
         tweet = filters(json.loads(line))
         if len(tweet) > 0:
             text = tweet['text'].encode('utf-8')
-            score = score_tweet(text, scores)
-            #print '{0} || {1}'.format(text, score)
-    
+            new_scores = score_new_terms(text, scores, new_scores)
+    return new_scores
+      
+def main():
+    scores = load_scores(sys.argv[1])    
+    tweet_file = open(sys.argv[2])
+    new_scores = score_file(tweet_file, scores)
     for term, score in new_scores.items():
-        print '{0} {1:.3f}'.format(term, score[0] / score[1])
+        print '{0} {1:.3f}'.format(term, score[0])
 
 if __name__ == '__main__':
     main()

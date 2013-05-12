@@ -5,47 +5,53 @@ class TestTermSentiment(unittest.TestCase):
 
     def setUp(self):
         self.scores = ts.load_scores('AFINN-111.txt')
+        self.temp_dir = '/home/artur/work/study/datasci/temp/'
 
     def test_score_tweet(self):
-        ts.score_tweet("", self.scores)
-        self.assertEqual({}, ts.new_scores)
+        score, new_terms, n = ts.score_tweet([], self.scores)
+        self.assertEqual(0, score)
+        self.assertEqual({}, new_terms)
         
-        ts.score_tweet("foo bar abandon bar", self.scores)
-        self.assertEqual({'foo':(-2,1), 'bar':(-2,2)}, ts.new_scores)
+        score, new_terms, n = ts.score_tweet("foo bar abandon bar".split(), self.scores)
+        self.assertEqual(-2, score)
+        self.assertEqual({'foo':1, 'bar':1}, new_terms)
         
-        ts.score_tweet("accept absolved adorable adventure award backing backs awesome attracts benefit stress", self.scores)
-        self.assertEqual((21.0, 1), ts.new_scores['stress'])
-        self.assertEqual((-2.0, 1), ts.new_scores['foo'])
-        self.assertEqual((-2.0, 2), ts.new_scores['bar'])
+        score, new_terms, n = ts.score_tweet("foo bar abandon bar abandon".split(), self.scores)
+        self.assertEqual(-2, score)
+        self.assertEqual({'foo':1, 'bar':1}, new_terms)
+    
+        score, new_terms, n = ts.score_tweet("accept friend".split(), self.scores)
+        self.assertEqual(1, score)
+        return
         
-        ts.score_tweet("barrier bastards benefitted chastises charged charmless chastises cheat giddy gloomy friend", self.scores)
-        self.assertEqual((-21.0, 1), ts.new_scores['friend'])
+    def test_score_new_terms(self):
+        new_scores = ts.score_new_terms("foo bar abandon bar", self.scores, {})
+        self.assertEqual({'foo':-0.5, 'bar':-0.5}, new_scores)
+        return
         
-        ts.score_tweet("barrier fuck bad worse bastards benefitted chastises charged charmless chastises cheat giddy gloomy stress", self.scores)
-        self.assertEqual((-10.0, 2), ts.new_scores['stress'])
+    def test_score_file(self):        
+        tf = open(self.temp_dir + 'test1.txt') # tweet file
+        res = ts.score_file(tf, self.scores)
+        self.assertEqual({'stress': -21.0/11}, res)
         
-        ts.score_tweet("foo bar stress bar", self.scores)
-        self.assertEqual((-16.0, 3), ts.new_scores['stress'])
-        self.assertEqual((-16.0, 2), ts.new_scores['foo'])
-        self.assertEqual((-16.0, 4), ts.new_scores['bar'])
+        tf = open(self.temp_dir + 'test2.txt') # tweet file
+        res = ts.score_file(tf, self.scores)
+        self.assertEqual({'friend': 0.65625}, res)
         
-        ts.score_tweet("Suicide Doesnt End The Chances Of Life Gettin Worse, Suicide Eliminates The Possibility Of It Ever Gettin Better", self.scores)
-        #print ts.new_scores
+        tf = open(self.temp_dir + 'test3.txt') # tweet file
+        res = ts.score_file(tf, self.scores)
+        self.assertEqual({'the': 0}, res)
+        
+        tf = open(self.temp_dir + 'test4.txt') # tweet file
+        res = ts.score_file(tf, self.scores)
+        print '------------------------------------------------'
+        return
+        
         
     def test_find(self):
         terms = ['love', 'happiness', 'ship', 'love']
-        count = ts.find(terms, 'love')
-        self.assertEqual(2, count)
-        
-        terms = "barrier bastards benefitted chastises charged charmless chastises cheat giddy gloomy stress".split()
-        ts.find(terms, 'barrier')
-        ts.find(terms, 'bastards')
-        ts.find(terms, 'benefitted')
-        ts.find(terms, 'charged')
-        ts.find(terms, 'charmless')
-        count = ts.find(terms, 'chastises')                
-        self.assertEqual(2, count)
-        self.assertEqual("cheat giddy gloomy stress".split(), terms)
+        self.assertEqual(True, ts.find(terms, 'love'))
+        self.assertEqual(['happiness', 'ship'], terms)
    
 if __name__ == '__main__':
     unittest.main()
