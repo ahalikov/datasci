@@ -10,7 +10,7 @@ import json
 """
 US States dictionary
 """
-us_states = {
+US_STATES = {
     'AK': 'Alaska', 'AL': 'Alabama', 'AR': 'Arkansas', 'AS': 'American Samoa', 'AZ': 'Arizona', 'CA': 'California',
     'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia',
     'GU': 'Guam', 'HI': 'Hawaii', 'IA': 'Iowa', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'KS': 'Kansas',
@@ -22,16 +22,16 @@ us_states = {
     'VA': 'Virginia', 'VI': 'Virgin Islands', 'VT': 'Vermont', 'WA': 'Washington', 'WI': 'Wisconsin', 'WV': 'West Virginia',
     'WY': 'Wyoming'
 }
+ENCODE_TEXT = True
 
+"""
+Returns tweet if it origins from US, or empty dict
+"""
 def from_us(tweet):
     if 'place' not in tweet or tweet['place'] is None:
         return {}
     place = tweet['place']
-    return tweet if 'country_code' in place and place['country_code'] == 'US' else {}            
-    
-has_text = lambda tweet: tweet if 'text' in tweet else {}
-lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
-apply_filters = lambda tweet: lang_en(from_us(has_text(tweet)))
+    return tweet if 'country_code' in place and place['country_code'] == 'US' else {}
 
 """
 Returns tweet's user location
@@ -56,7 +56,14 @@ def load_scores(file_name):
     return scores
 
 """
-Give a tweet score
+Returns a list of tweet terms
+"""
+def get_terms(tweet, encode=True):
+    text = tweet['text'].encode('utf-8') if encode else tweet['text']
+    return text.split()
+
+"""
+Give score to a tweet
 """
 def score_tweet(terms, scores):
     score = 0
@@ -66,12 +73,14 @@ def score_tweet(terms, scores):
             count = terms.count(term)
             score += (scores[term_lo] * 1.0) / count
     return score
-
+"""
+Defines US state of a tweet
+"""
 def get_state(tweet):
     def lookup(place):
         if len(place) > 0:
             for t in place:
-                if t in us_states:
+                if t in US_STATES:
                     return t;
         return ''
     # Trying to define state from user data
@@ -80,19 +89,28 @@ def get_state(tweet):
         # Trying to define state from place
         state = lookup(get_place_name(tweet).split())
     return state
-    
-def main():
-    scores = load_scores(sys.argv[1])
-    tweet_file = open(sys.argv[2])
+
+"""
+Defines a 'happiest state' from input tweets file
+"""
+def get_happiest_state(tweet_file, scores):
+    has_text = lambda tweet: tweet if 'text' in tweet else {}
+    lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
+    apply_filters = lambda tweet: lang_en(from_us(has_text(tweet)))
+    state_score = {}
     for line in tweet_file:
         tweet = apply_filters(json.loads(line))
         if len(tweet) > 0:
             state = get_state(tweet)
-            location = get_user_location(tweet)
-            print('state={0}, location={1}'.format(state, location))
-            print(us_states['CA'])
-            #text = tweet['text'].encode('utf-8')
-            #terms = [t.strip(',.!#') for t in text.split()]
+            if state != '':
+                score = score_tweet(get_terms(tweet, ENCODE_TEXT), scores)
+                state_score[state] = state_score[state] + 1 if state in state_score else score
+    return max(state_score, key=state_score.get)
+    
+def main():
+    scores = load_scores(sys.argv[1])
+    tweet_file = open(sys.argv[2])
+    print(get_happiest_state(tweet_file, scores))
 
 if __name__ == '__main__':
     main()
