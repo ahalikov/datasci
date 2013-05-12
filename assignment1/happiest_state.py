@@ -95,7 +95,6 @@ Defines a 'happiest state' from input tweets file
 """
 def get_happiest_state(tweet_file, scores):
     has_text = lambda tweet: tweet if 'text' in tweet else {}
-    lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
     apply_filters = lambda tweet: from_us(has_text(tweet))
     state_score = {}
     for line in tweet_file:
