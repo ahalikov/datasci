@@ -1,7 +1,7 @@
 """
 Assignment 1, problem 2: Tweet Sentiment
-author: Artur Khalikov
 """
+__author__ = 'Artur Khalikov'
 
 import sys
 import json

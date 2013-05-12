@@ -1,6 +1,8 @@
 import unittest
 import assignment1.tweet_sentiment as ts
 
+__author__ = 'Artur Khalikov'
+
 class TestTweetSentiment(unittest.TestCase):
 
     def setUp(self):

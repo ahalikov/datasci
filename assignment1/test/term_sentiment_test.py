@@ -1,6 +1,8 @@
 import unittest
 import assignment1.term_sentiment as ts
 
+__author__ = 'Artur Khalikov'
+
 class TestTermSentiment(unittest.TestCase):
 
     def setUp(self):

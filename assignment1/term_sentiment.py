@@ -1,7 +1,8 @@
 """
 Assignment 1, problem 3: Term Sentiment
-author: Artur Khalikov
 """
+
+__author__ = 'Artur Khalikov'
 
 import sys
 import json

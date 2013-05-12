@@ -2,7 +2,7 @@
 Assignment 1, problem 4: Happiest state
 """
 
-__author__ = 'Artur'
+__author__ = 'Artur Khalikov'
 
 import sys
 import json
