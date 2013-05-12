@@ -96,7 +96,7 @@ Defines a 'happiest state' from input tweets file
 def get_happiest_state(tweet_file, scores):
     has_text = lambda tweet: tweet if 'text' in tweet else {}
     lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
-    apply_filters = lambda tweet: lang_en(from_us(has_text(tweet)))
+    apply_filters = lambda tweet: from_us(has_text(tweet))
     state_score = {}
     for line in tweet_file:
         tweet = apply_filters(json.loads(line))
@@ -105,12 +105,14 @@ def get_happiest_state(tweet_file, scores):
             if state != '':
                 score = score_tweet(get_terms(tweet, ENCODE_TEXT), scores)
                 state_score[state] = state_score[state] + 1 if state in state_score else score
-    return max(state_score, key=state_score.get)
+    return max(state_score, key=state_score.get) if len(state_score) > 0 else ''
     
 def main():
     scores = load_scores(sys.argv[1])
     tweet_file = open(sys.argv[2])
-    print(get_happiest_state(tweet_file, scores))
+    state = get_happiest_state(tweet_file, scores)
+    if state != '':
+        print(state)
 
 if __name__ == '__main__':
     main()
