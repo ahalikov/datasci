@@ -23,7 +23,7 @@ us_states = {
     'WY': 'Wyoming'
 }
 
-def form_us(tweet):
+def from_us(tweet):
     if 'place' not in tweet or tweet['place'] is None:
         return {}
     place = tweet['place']
@@ -31,7 +31,7 @@ def form_us(tweet):
     
 has_text = lambda tweet: tweet if 'text' in tweet else {}
 lang_en = lambda tweet: tweet if 'lang' in tweet and tweet['lang'] == 'en' else {}
-apply_filters = lambda tweet: lang_en(form_us(has_text(tweet)))
+apply_filters = lambda tweet: lang_en(from_us(has_text(tweet)))
 
 """
 Returns tweet's user location
