@@ -24,8 +24,11 @@ def find(terms, key):
     while key in terms:
         terms.remove(key)
     return True
-    
-def score_tweet(terms, scores):
+
+"""
+Score terms that are from AFINN-111.txt file
+"""    
+def score_known_terms(terms, scores):
     new_terms = {}
     score = 0
     for term in terms:
@@ -37,6 +40,9 @@ def score_tweet(terms, scores):
             new_terms[term] = 1
     return (score, new_terms, len(terms))
 
+"""
+Adjust score using
+"""
 def adjust_score(score, norm, terms, new_scores):
     # adjusting score
     for term in terms:
@@ -53,32 +59,26 @@ def adjust_score(score, norm, terms, new_scores):
             value = (score*1.0) / norm                
             new_scores[term] = (value, 1)
     return score, new_scores
-    
-def score_new_terms(tweet, scores, new_scores):
+
+"""
+Score a tweet
+"""
+def score_tweet(tweet, scores, new_scores):
     terms = [t.strip(',.!#') for t in tweet.split()]
-    score, new_terms, norm = score_tweet(terms, scores)
-    
-    score0 = score
-    s0 = {}
-    if 'stress' in terms:        
-        for term in terms:
-            s0[term] = new_scores[term] if term in new_scores else None
-    
+    score, new_terms, norm = score_known_terms(terms, scores)
     score, new_scores = adjust_score(score, norm, new_terms, new_scores)
-    if 'stress' in terms:
-        s = {}
-        for term in terms:
-            s[term] = new_scores[term] if term in new_scores else None
-        #print '{0} || {1}->{2} || {3}'.format(tweet, score0, score, str(s))
     return new_scores
-    
+
+"""
+Score whole file
+"""
 def score_file(tweet_file, scores):
     new_scores = {}
     for line in tweet_file:
         tweet = filters(json.loads(line))
         if len(tweet) > 0:
             text = tweet['text'].encode('utf-8')
-            new_scores = score_new_terms(text, scores, new_scores)
+            new_scores = score_tweet(text, scores, new_scores)
     return new_scores
       
 def main():
