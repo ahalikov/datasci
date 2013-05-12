@@ -86,7 +86,7 @@ def main():
     tweet_file = open(sys.argv[2])
     new_scores = score_file(tweet_file, scores)
     for term, score in new_scores.items():
-        print '{0} {1:.3f}'.format(term, score[0])
+        print('{0} {1:.3f}'.format(term, score[0]))
 
 if __name__ == '__main__':
     main()

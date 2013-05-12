@@ -49,7 +49,7 @@ def main():
     tweets = load_tweets(sys.argv[2])
     for tweet in tweets:
         score = pscore_tweet(format_tweet(tweet), scores)
-        print '||{0}|| {1}'.format(tweet, score)
+        print('||{0}|| {1}'.format(tweet, score))
 
 if __name__ == '__main__':
     main()

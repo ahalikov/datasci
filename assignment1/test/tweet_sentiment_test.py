@@ -1,5 +1,5 @@
 import unittest
-import tweet_sentiment as ts
+import assignment1.tweet_sentiment as ts
 
 class TestTweetSentiment(unittest.TestCase):
 

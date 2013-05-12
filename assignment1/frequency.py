@@ -27,7 +27,7 @@ def main():
         total += value
     
     for term, value in file_occurences.items():
-        print '{0} {1:.3f}'.format(term, (value * 1.0) / total)
+        print('{0} {1:.3f}'.format(term, (value * 1.0) / total))
                     
 if __name__ == '__main__':
     main()

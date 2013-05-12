@@ -1,5 +1,5 @@
 import unittest
-import term_sentiment as ts
+import assignment1.term_sentiment as ts
 
 class TestTermSentiment(unittest.TestCase):
 

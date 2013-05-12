@@ -1,51 +1,59 @@
-Alabama AL
-Alaska AK
-Arizona	AZ
-Arkansas AR
-California CA
-Colorado CO
-Connecticut CT
-Delaware DE
-District of Columbia DC
-Florida	FL
-Georgia	GA
-Hawaii	HI
-Idaho ID
-Illinois IL
-Indiana IN
-Iowa IA
-Kansas KS
-Kentucky KY
-Louisiana LA
-Maine ME
-Maryland MD
-Massachusetts MA
-Michigan MI
-Minnesota MN
-Mississippi MS
-Missouri MO
-Montana MT
-Nebraska NE
-Nevada NV
-New Hampshire	State	US-NH	NH
-New Jersey	State	US-NJ	NJ
-New Mexico	State	US-NM	NM
-New York	State	US-NY	NY
-North Carolina	State	US-NC	NC
-North Dakota	State	US-ND	ND
-Ohio	State	US-OH	OH	39	OH
-Oklahoma	State	US-OK	OK
-Oregon	State	US-OR	OR
-Pennsylvania	State (Commonwealth)	US-PA	PA	42	PA
-Rhode Island	State	US-RI	RI	44	RI
-South Carolina	State	US-SC	SC	45	SC
-South Dakota	State	US-SD	SD	46	SD
-Tennessee	State	US-TN	TN	47	TN
-Texas	State	US-TX	TX	48	TX	TX
-Utah	State	US-UT	UT	49	UT	UT
-Vermont	State	US-VT	VT	50	VT	VT
-Virginia	State (Commonwealth)	US-VA	VA
-Washington	State	US-WA	WA	53	WA
-West Virginia	State	US-WV	WV
-Wisconsin	State	US-WI	WI
-Wyoming WY
+states = {
+    'American Samoa',
+    'AZ': 'Arizona',
+    'CA': 'California',
+    'CO': 'Colorado',
+    'CT': 'Connecticut',
+    'DC':'AK': 'Alaska',
+    'AL': 'Alabama',
+    'AR': 'Arkansas',
+    'AS':  'District of Columbia',
+    'DE': 'Delaware',
+    'FL': 'Florida',
+    'GA': 'Georgia',
+    'GU': 'Guam',
+    'HI': 'Hawaii',
+    'IA': 'Iowa',
+    'ID': 'Idaho',
+    'IL': 'Illinois',
+    'IN': 'Indiana',
+    'KS': 'Kansas',
+    'KY': 'Kentucky',
+    'LA': 'Louisiana',
+    'MA': 'Massachusetts',
+    'MD': 'Maryland',
+    'ME': 'Maine',
+    'MI': 'Michigan',
+    'MN': 'Minnesota',
+    'MO': 'Missouri',
+    'MP': 'Northern Mariana Islands',
+    'MS': 'Mississippi',
+    'MT': 'Montana',
+    'NA': 'National',
+    'NC': 'North Carolina',
+    'ND': 'North Dakota',
+    'NE': 'Nebraska',
+    'NH': 'New Hampshire',
+    'NJ': 'New Jersey',
+    'NM': 'New Mexico',
+    'NV': 'Nevada',
+    'NY': 'New York',
+    'OH': 'Ohio',
+    'OK': 'Oklahoma',
+    'OR': 'Oregon',
+    'PA': 'Pennsylvania',
+    'PR': 'Puerto Rico',
+    'RI': 'Rhode Island',
+    'SC': 'South Carolina',
+    'SD': 'South Dakota',
+    'TN': 'Tennessee',
+    'TX': 'Texas',
+    'UT': 'Utah',
+    'VA': 'Virginia',
+    'VI': 'Virgin Islands',
+    'VT': 'Vermont',
+    'WA': 'Washington',
+    'WI': 'Wisconsin',
+    'WV': 'West Virginia',
+    'WY': 'Wyoming'
+}

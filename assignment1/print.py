@@ -14,5 +14,5 @@ def get_page(p):
 for p in range(1,11):
     results = get_page(p)    
     for r in results:
-        print r['text'].encode('utf-8')
+        print(r['text'].encode('utf-8'))
         
