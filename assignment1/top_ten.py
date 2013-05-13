@@ -5,33 +5,25 @@ import json
 
 encode_text = False
 
-"""
-Returns a list of tweet terms
-"""
-def get_terms(tweet, encode=True):
-    text = tweet['text'].encode('utf-8') if encode else tweet['text']
-    return text.split()
-
-def get_hash_tags(tweet_file):
-    has_text = lambda tweet: tweet if 'text' in tweet else {}
-    apply_filters = lambda tweet: has_text(tweet)
-    tags = {}
+def get_hashtags(tweet_file):
+    hashtags = {}
     for line in tweet_file:
-        tweet = apply_filters(json.loads(line))
-        if len(tweet) > 0:
-            terms = get_terms(tweet, encode_text)
-            for term in terms:
-                if term.count('#') > 0:
-                    tags[term] = tags[term] + 1 if term in tags else 1
-    return tags
+        tweet = json.loads(line)
+        if 'entities' in tweet:
+            if 'hashtags' in tweet['entities']:
+                if len(tweet['entities']['hashtags']) > 0:
+                    for tag in tweet['entities']['hashtags']:
+                        text = tag['text']
+                        hashtags[text] = hashtags[text] + 1 if text in hashtags else 1
+    return hashtags
 
-def get_top_tags(tags):
+def get_top_ten(tags):
     tags = dict((key, tags[key]) for key in sorted(tags, key=tags.get))
     return tags if len(tags) <= 10 else dict(tags.popitem() for i in range(10))
 
 def main():
     tweet_file = open(sys.argv[1])
-    tags = get_top_tags(get_hash_tags(tweet_file))
+    tags = get_top_ten(get_hashtags(tweet_file))
     for tag, count in tags.items():
         print('{0} {1:.2f}'.format(tag, count))
 
