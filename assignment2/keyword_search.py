@@ -1,5 +1,5 @@
 """
-Assignment 2 problem 3: Similarity matrix
+Assignment 2 problem 4: Keyword Search
 """
 
 __author__ = 'Artur Khalikov'
@@ -7,42 +7,48 @@ __author__ = 'Artur Khalikov'
 import sqlite3 as lite
 import sys
 
-"""
-Creates two views a, b 
-that represent matrix and transposed matrix
-"""
+con = None
+
 def create_views(con):
     with con:
         cur = con.cursor()
         cur.executescript("""
             drop view if exists a;
-            create view a
-            as select * from Frequency
-            where docid in ('10080_txt_crude', '17035_txt_earn');
             
+            create view a as
+            SELECT * FROM Frequency
+            UNION
+            SELECT 'q' as docid, 'washington' as term, 1 as count
+            UNION
+            SELECT 'q' as docid, 'taxes' as term, 1 as count
+            UNION
+            SELECT 'q' as docid, 'treasury' as term, 1 as count;            
+           
             drop view if exists b;
             create view b as select term, docid, count from a;
             """)
 
 """
 Matrix product (similarity matrix)
-    a = ||docid||term ||count||
-    b = ||term ||docid||count||
+a = ||docid||term ||count||
+b = ||term ||docid||count||
 """       
 def find_similarity(con):
     with con:
         cur = con.cursor()
         rs = cur.execute("""
-            select a.docid, b.term, sum(a.count * b.count)
-            from a, b
-            where a.term = b.term and a.docid < b.docid
-            group by a.docid, b.docid
+            select * from (
+                select a.docid, b.term, sum(a.count * b.count)
+                from a, b
+                where a.term = b.term
+                group by a.docid, b.docid
+            ) where docid = 'q'
             """)
         for row in rs:
             print(row)
 
 def main():
-    try:        
+    try:
         con = lite.connect(sys.argv[1])
         create_views(con)
         find_similarity(con)

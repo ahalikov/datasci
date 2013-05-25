@@ -1,6 +1,8 @@
 """
-Matrix operations via sql
+Assignment 2 problem 2: Matrix operations via sql
 """
+
+__author__ = 'Artur Khalikov'
 
 import sqlite3 as lite
 import sys
