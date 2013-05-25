@@ -407,4 +407,4 @@ scores = []
 for t in rows:
     scores.append(t[2])
     
-print max(scores)
+print(max(scores))

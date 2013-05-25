@@ -47,8 +47,8 @@ def main():
         create_views(con)
         find_similarity(con)
         
-    except lite.Error, e:        
-        print "Error %s:" % e.args[0]
+    except lite.Error as e:
+        print('Error {0}: '.format(e.args[0]))
         sys.exit(1)
         
     finally:        
