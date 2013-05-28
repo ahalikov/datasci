@@ -13,10 +13,13 @@ import sys
 mr = MapReduce.MapReduce()
 
 def mapper(record):
-    mr.emit_intermediate()
+    mr.emit_intermediate(record[0], record[1])
 
 def reducer(key, list_of_values):
-    mr.emit()
+    count = 0
+    for person in list_of_values:
+        count += 1
+    mr.emit((key, count))
 
 if __name__ == '__main__':
     inputdata = open(sys.argv[1])
